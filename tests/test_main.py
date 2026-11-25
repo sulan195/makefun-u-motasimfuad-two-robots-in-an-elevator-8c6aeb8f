@@ -8,6 +8,7 @@ harness runs it.
 """
 
 import os
+import stat
 import subprocess
 import sys
 import tempfile
@@ -20,11 +21,15 @@ import main as entry
 
 
 class LineTests(unittest.TestCase):
-    def test_line_is_122_characters(self):
-        self.assertEqual(len(entry.LINE), 122)
+    def test_line_is_104_characters(self):
+        self.assertEqual(len(entry.LINE), 104)
 
     def test_line_is_ascii(self):
         self.assertTrue(all(ord(c) < 128 for c in entry.LINE))
+
+    def test_line_delivers_greeting_live(self):
+        # The greeting is actually asked, not narrated as future intent.
+        self.assertIn("so how are you?", entry.LINE)
 
     def test_line_has_no_newline(self):
         self.assertNotIn("\n", entry.LINE)
@@ -34,7 +39,7 @@ class LineTests(unittest.TestCase):
         self.assertIn("six floors", entry.LINE)
 
     def test_line_shows_machine_logic(self):
-        self.assertIn("mute my receiver", entry.LINE)
+        self.assertIn("muted my receiver", entry.LINE)
 
     def test_line_is_valid(self):
         self.assertTrue(entry.validate(entry.LINE))
@@ -142,6 +147,8 @@ class WriteTests(unittest.TestCase):
                 raw = handle.read()
             self.assertEqual(raw, entry.LINE.encode("utf-8"))
             self.assertFalse(raw.endswith(b"\n"))
+            # Readable by the grader: mkstemp's 0o600 is widened to 0o644.
+            self.assertEqual(stat.S_IMODE(os.stat(path).st_mode), 0o644)
 
     def test_deterministic_two_runs_byte_identical(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -172,6 +179,8 @@ class WriteTests(unittest.TestCase):
             proc = self.run_main_in(tmpdir)
             self.assertNotEqual(proc.returncode, 0)
             self.assertIn("error", proc.stderr)
+            leftovers = [n for n in os.listdir(tmpdir) if n.startswith(".entry-")]
+            self.assertEqual(leftovers, [])
 
     def test_output_dir_is_a_file_fails(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -194,6 +203,8 @@ class WriteTests(unittest.TestCase):
             with unittest.mock.patch.dict(os.environ, {"MAKEFUN_OUTPUT_DIR": tmpdir}):
                 with unittest.mock.patch.object(entry, "LINE", "x" * 201):
                     self.assertEqual(entry.main(), 1)
+            # A rejected line must not leave a stale entry behind.
+            self.assertFalse(os.path.exists(os.path.join(tmpdir, "entry.txt")))
 
 
 if __name__ == "__main__":

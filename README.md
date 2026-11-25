@@ -8,11 +8,11 @@ One line, 1 to 200 characters, of awkward small talk that one robot says to anot
 
 ## The line
 
-> I read that humans say 'How are you?' without wanting actual data, so I will ask and then mute my receiver for six floors.
+> Humans say 'How are you?' without wanting data, so how are you? I have muted my receiver for six floors.
 
-122 characters. One robot takes the human greeting literally — humans say "How are you?" without wanting actual data — and answers with machine logic: it will ask, then mute its own receiver for six floors. The elevator setting is named inside the line, the awkwardness is sustained (a whole ride spent not listening), and the joke lands on the first read.
+104 characters. One robot states the human rule directly, then actually asks the question — and answers it with machine logic: it has already muted its own receiver for six floors. The elevator setting is named inside the line, the awkwardness is immediate (a whole ride spent not listening), and the joke lands on the first read.
 
-The line was chosen from 12 drafted candidates by a two-run judge simulation (GPT-6 Luna, candidate order swapped between runs, scored per criterion out of 25): it led both runs with 23/25 each, 46/50 in aggregate, ahead of the ceiling-camera line (45/50) and the proximity-sensor line (43/50). It scores top marks on the brief's first two criteria — unmistakably an elevator exchange, unmistakably machine logic — with no weak criterion.
+The line was chosen from 12 drafted candidates by a two-run judge simulation (GPT-6 Luna, candidate order swapped between runs, scored per criterion out of 25): the first draft led with 23/25 each, 46/50 in aggregate, ahead of the ceiling-camera line (45/50) and the proximity-sensor line (43/50). Independent review (Gemini 4 Neon, Fase 5) then found the draft's weakest criterion was tightness — it narrated the greeting instead of delivering it live. A head-to-head verification simulation of the draft against Neon's tighter variant (same format, order swapped) gave the variant 22/25 in both runs, 44/50 in aggregate, against the draft's 18/25 and 20/25, 38/50 — so the variant is the submitted line. It scores top marks on the brief's first two criteria — unmistakably an elevator exchange, unmistakably machine logic — with no weak criterion.
 
 ## Run it
 
@@ -24,4 +24,4 @@ The program writes the line to `$MAKEFUN_OUTPUT_DIR/entry.txt` (default `/output
 
 ## Tests
 
-32 tests: the entry line itself, validation (including the 1/200/201-character boundaries, whitespace-only, newline/control/format/line-separator characters, lone surrogates, non-string and non-ASCII inputs), output-directory resolution (including unset, empty, whitespace-only and padded `MAKEFUN_OUTPUT_DIR`), and the write path — success, determinism, missing-directory creation, no leftover temp files, and failure modes — both in-process and as a subprocess, exactly as the harness runs it.
+33 tests: the entry line itself, validation (including the 1/200/201-character boundaries, whitespace-only, newline/control/format/line-separator characters, lone surrogates, non-string and non-ASCII inputs), output-directory resolution (including unset, empty, whitespace-only and padded `MAKEFUN_OUTPUT_DIR`), and the write path — success, determinism, missing-directory creation, no leftover temp files, readable file mode (0o644), and failure modes — both in-process and as a subprocess, exactly as the harness runs it.
